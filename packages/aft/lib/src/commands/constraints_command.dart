@@ -84,15 +84,15 @@ class _ConstraintsSubcommand extends AmplifyCommand with GlobOptions {
       }
     }
     final mismatchedDependencies = constraintsCheckers.expand(
-      (checker) => checker.mismatchedDependencies,
+          (checker) => checker.mismatchedDependencies,
     );
     if (mismatchedDependencies.isNotEmpty) {
       for (final mismatched in mismatchedDependencies) {
         final (:package, :dependencyName, :message) = mismatched;
         logger.error(
           '${package.path}\n'
-          'Mismatched `$dependencyName`:\n'
-          '$message\n',
+              'Mismatched `$dependencyName`:\n'
+              '$message\n',
         );
       }
       exit(1);
@@ -129,7 +129,9 @@ class _ConstraintsUpdateCommand extends _ConstraintsSubcommand {
     await super.run();
     final globalDependencyConfig = aftConfig.dependencies;
 
-    final rootPubspec = Directory.fromUri(aftConfig.rootDirectory).pubspec!;
+    final rootPubspec = Directory
+        .fromUri(aftConfig.rootDirectory)
+        .pubspec!;
     final aftEditor = rootPubspec.pubspecYamlEditor;
     final failedUpdates = <String>[];
     for (final entry in globalDependencyConfig.entries) {
@@ -161,7 +163,7 @@ class _ConstraintsUpdateCommand extends _ConstraintsSubcommand {
             updateConstraint(
               maxBy(
                 [versionConstraint, latestVersion],
-                (v) => v,
+                    (v) => v,
               )!,
             );
           }
@@ -193,7 +195,7 @@ class _ConstraintsUpdateCommand extends _ConstraintsSubcommand {
             if (latestVersion > upperBound) {
               logger.warn(
                 'Breaking change detected for $package: $latestVersion '
-                '(current constraint: $versionConstraint)',
+                    '(current constraint: $versionConstraint)',
               );
             }
             continue;
@@ -219,7 +221,7 @@ class _ConstraintsUpdateCommand extends _ConstraintsSubcommand {
           if (latestVersion >= lowerBound.nextBreaking) {
             logger.warn(
               'Breaking change detected for $package: $latestVersion '
-              '(current constraint: $versionConstraint)',
+                  '(current constraint: $versionConstraint)',
             );
             continue;
           }
@@ -272,6 +274,7 @@ class _ConstraintsPubVerifyCommand extends AmplifyCommand {
       defaultsTo: '100',
     );
   }
+
   @override
   String get name => 'pub-verify';
 
@@ -290,8 +293,6 @@ class _ConstraintsPubVerifyCommand extends AmplifyCommand {
     // Packages with version constraints so old, we consider them abandoned
     // and don't bother running the constraint check for them.
     const unofficiallyAbandonedPackages = [
-      'chewie',
-      'wakelock',
     ];
 
     // List top pub.dev packages
@@ -314,7 +315,7 @@ class _ConstraintsPubVerifyCommand extends AmplifyCommand {
     // Create app with all Amplify Flutter dependencies
     logger.info('Creating temporary app...');
     final appDir =
-        Directory.systemTemp.createTempSync('amplify_constraints_verify_');
+    Directory.systemTemp.createTempSync('amplify_constraints_verify_');
     final createRes = await Process.start(
       'flutter',
       ['create', '--project-name=constraints_verify', '.'],
@@ -348,7 +349,7 @@ class _ConstraintsPubVerifyCommand extends AmplifyCommand {
     // Try adding each package
     final failedPackages = <String>[];
     for (final MapEntry(key: packageName, value: latestVersion)
-        in topPubPackages.entries) {
+    in topPubPackages.entries) {
       logger.info('Verifying "$packageName:$latestVersion"...');
       final addRes = await Process.run(
         'flutter',
@@ -377,9 +378,8 @@ class _ConstraintsPubVerifyCommand extends AmplifyCommand {
     }
 
     if (failedPackages.isNotEmpty) {
-      logger
-        ..error('Failed to add the following packages:')
-        ..error(failedPackages.map((pkg) => '- $pkg').join('\n'));
+      logger..error('Failed to add the following packages:')..error(
+          failedPackages.map((pkg) => '- $pkg').join('\n'));
       exit(1);
     }
 
